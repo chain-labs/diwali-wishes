@@ -13,13 +13,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <React.Fragment>
       <Head>
-        // @TEMPLATE: Page Title
         <title>{WEBSITE_TITLE}</title>
-        <link
-          rel="shortcut icon"
-          // @TEMPLATE: Favicon
-          href={FAVICON_URL}
-        />
+        <link rel="shortcut icon" href={FAVICON_URL} />
       </Head>
       <ThemeProvider theme={theme}>
         <Toaster />
