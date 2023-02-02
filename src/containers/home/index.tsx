@@ -197,7 +197,7 @@ const HomeContainer = () => {
             then={
               <Box
                 as="a"
-                href={DISCORD_URL}
+                href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="icon"
