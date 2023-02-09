@@ -56,13 +56,19 @@ const useWallet = (): any => {
           await provider.send("eth_requestAccounts", []);
           provider.getNetwork().then(async (network) => {
             const networkId = network.chainId;
+            console.log({
+              networkId,
+              CHAIN: parseInt(CHAIN_ID).toString(16),
+              CHAIN_ID,
+            });
+
             if (networkId !== parseInt(CHAIN_ID)) {
               // @ts-ignore
               await window.ethereum.request({
                 method: "wallet_switchEthereumChain",
                 params: [
                   {
-                    chainId: `0x${CHAIN_ID}`,
+                    chainId: `0x${parseInt(CHAIN_ID).toString(16)}`,
                   },
                 ],
               });

@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-import { DiscordFill, InstagramFill, TwitterFill } from "akar-icons";
+import {
+  Cross,
+  DiscordFill,
+  InstagramFill,
+  TelegramFill,
+  TwitterFill,
+} from "akar-icons";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 // import DiscordFill from "../components/svgs/discord";
@@ -19,6 +25,9 @@ import {
   HERO_MEDIA,
   INSTAGRAM_URL,
   LOGO_MEDIA,
+  SHOW_TOKENS_CLAIMED,
+  SHOW_TOTAL_TOKENS,
+  TELEGRAM_URL,
   TEXT_COLOR,
   TOKEN_COUNTER_COLOR,
   TWITTER_URL,
@@ -44,22 +53,11 @@ const BUTTON_TEXT = {
 
 const HomeContainer = () => {
   const [connected, setConnected] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const [user, provider, signer, connectWallet] = useWallet();
-  const [noOfTokens, setNoOfTokens] = useState<string>("");
-  const [noSale, setNoSale] = useState(false);
-  const [disabledMintButton, setDisabledMintButton] = useState(true);
-  const [disabledMintInput, setDisabledMintInput] = useState(false);
-  const [buttonText, setButtonText] = useState("Mint for Free");
-
   const [totalSupply, setTotalSupply] = useState<number>();
   const [maximumTokens, setMaximumTokens] = useState<number>();
-
   const [contract] = useContract(CONTRACT_ADDRESS, provider);
-
-  const [maxPurchase, setMaxPurchase] = useState<number>();
-
-  const [tokenCount, setTokenCount] = useState<number>();
+  const [expandedImage, setExpandedImage] = useState(false);
 
   useEffect(() => {
     const getSupply = async () => {
@@ -103,6 +101,21 @@ const HomeContainer = () => {
     setTotalSupply(totalSupply + quantity);
   };
 
+  const handleExpand = (e) => {
+    e.preventDefault();
+    setExpandedImage(true);
+  };
+
+  const handleClose = (e) => {
+    e.preventDefault();
+    setExpandedImage(false);
+    console.log("click");
+  };
+
+  useEffect(() => {
+    console.log({ expandedImage });
+  }, [expandedImage]);
+
   return (
     <Box
       className="container"
@@ -143,8 +156,8 @@ const HomeContainer = () => {
         </Box>
         <Box
           display="flex"
+          flex={1}
           flexDirection="row"
-          width="25rem"
           justifyContent="space-evenly"
           css={`
             @media screen and (max-width: 768px) {
@@ -152,6 +165,7 @@ const HomeContainer = () => {
             }
           `}
           className="icon-box"
+          maxWidth="30rem"
         >
           <Box
             as="a"
@@ -188,7 +202,7 @@ const HomeContainer = () => {
                 rel="noreferrer"
                 className="icon"
               >
-                <DiscordFill color={TEXT_COLOR} size="48" />
+                <DiscordFill color={TEXT_COLOR} size={48} />
               </Box>
             }
           />
@@ -202,33 +216,80 @@ const HomeContainer = () => {
                 rel="noreferrer"
                 className="icon"
               >
-                <InstagramFill color={TEXT_COLOR} size="48" />
+                <InstagramFill color={TEXT_COLOR} size={48} />
+              </Box>
+            }
+          />
+          <If
+            condition={!!TELEGRAM_URL}
+            then={
+              <Box
+                as="a"
+                href={TELEGRAM_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="icon"
+              >
+                <TelegramFill color={TEXT_COLOR} size={48} />
               </Box>
             }
           />
         </Box>
       </Box>
       <Box className="hero">
-        <div className="hero-media">
+        <Box
+          className="hero-media"
+          onClick={handleExpand}
+          height={expandedImage ? "100vh" : { mobS: "20rem", tabS: "30rem" }}
+          width={expandedImage ? "100vw" : { mobS: "20rem", tabS: "30rem" }}
+          position={expandedImage ? "absolute" : "relative"}
+          borderRadius="8px"
+          overflow="hidden"
+          top="0"
+          backgroundColor={expandedImage ? BACKGROUND_COLOR : "none"}
+        >
           <Image
             alt="hero g-smif"
             src={HERO_MEDIA}
             layout="fill"
             className="hero-gif"
             quality="1"
-            objectFit="cover"
+            objectFit="contain"
           />
-        </div>
+          <If
+            condition={expandedImage}
+            then={
+              <Box
+                display="flex"
+                alignItems="center"
+                ml="mm"
+                cursor="pointer"
+                zIndex="20"
+                onClick={handleClose}
+                width="100px"
+              >
+                <Cross />
+                <Box as="h2" fontSize="1.6rem" ml="mxs" color={TEXT_COLOR}>
+                  Close
+                </Box>
+              </Box>
+            }
+          />
+        </Box>
         <Box as="h1" id="hero-text" color={TEXT_COLOR}>
           {COLLECTION_NAME}
         </Box>
-        {connected ? (
+        {connected && SHOW_TOKENS_CLAIMED ? (
           <Box
             as="h3"
             id="counter"
             fontSize="1.8rem"
             color={TOKEN_COUNTER_COLOR}
-          >{`Tokens Claimed: ${totalSupply}/${maximumTokens}`}</Box>
+          >
+            {SHOW_TOTAL_TOKENS
+              ? `Tokens Claimed: ${totalSupply}/${maximumTokens}`
+              : `Tokens Claimed: ${totalSupply}`}
+          </Box>
         ) : null}
       </Box>
       <Box className="mint-section">

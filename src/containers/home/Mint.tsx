@@ -139,7 +139,9 @@ const Mint = ({ provider, signer, user, incrementSupply }) => {
           incrementSupply(parseInt(noOfTokens));
           resetMint();
           toast(
-            `🎉 Succesfully minted ${noOfTokens} Block Ape Lads!//${tx.transactionHash}`
+            `🎉 Succesfully minted ${noOfTokens} Token${
+              noOfTokens > 1 ? "s" : ""
+            }!//${tx.transactionHash}`
           );
         })
         .catch((err: any, tx: any) => {
